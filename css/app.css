@@ -3,6 +3,7 @@
     --white: #ffffff;
     --grey: #2e3d49;
     --blue: #02b3e4;
+    --deep_blue: #00a5d3;
     --red: #631010;
 }
 
@@ -26,10 +27,9 @@ body {
 }
 
 body {
-    /* background: var(--white) url('../img/geometry2.png'); Background pattern from Subtle Patterns */
     background: var(--white) ; /* Background pattern from Subtle Patterns */
     font-family: 'Coda', cursive;
-    background: var(--grey);
+    background: var(--blue);
 }
 
 .container {
@@ -41,61 +41,91 @@ body {
 
 h1 {
     font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
+    font-weight: 200;
 }
 
 /*
  * Styles for the deck of cards
  */
 
+:root {
+    --deck_size: 78vw;
+    --card_size: 14vw;
+    --font_size: 10vw;
+    --card_size-05: -7vw;
+    --move_card: 40vw;
+}
+
 .deck {
-    max-width: 660px;
-    margin-left: auto;
-    margin-right: auto;
-    min-height: 680px;
-    /* background: linear-gradient(160deg, var(--black) 0%, var(--dark) 100%); */
+    width: var(--deck_size);
+    padding-top: var(--deck_size);
     background: var(--black);
-    padding: 32px;
-    /* border-radius: 10px; */
-    /* box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5); */
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 0 3em;
+    /* background: radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
+    position: relative;
+    /* border: solid 25px var(--grey); */
+    border-radius: 50%;
+    display: grid;
+    margin: 100px auto auto auto;
 }
 
 .deck .card {
-    height: 120px;
-    width: 120px;
+    display: block;
+    /* to position cards in center of the deck */
+    overflow: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: var(--card_size);
+    width: var(--card_size);
+    margin: var(--card_size-05);
+
+    /* to style and position interior of the cards */
     background: var(--grey);
-    font-size: 1.5em;
+    font-size: 0em;
     color: var(--white);
-    border-radius: 60px;
+    border-radius: 50%;
     cursor: pointer;
     display: flex;
     justify-content: center;
-    align-items: center;
-    /* box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5); */
+    align-items:center;
 }
+
+/* position cards around the on the circle */
+.n1 { transform: translate(var(--move_card)); }
+.n2 { transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg); }
+.n3 { transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg); }
+.n4 { transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg); }
+.n5 { transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg); }
+.n6 { transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg); }
+.n7 { transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg); }
+.n8 { transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg); }
+.n9 { transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg); }
+.n10 { transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg); }
+.n11 { transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg); }
+.n12 { transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg); }
+.n13 { transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg); }
+.n14 { transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg); }
+.n15 { transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg); }
+.n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg); }
+
 
 .deck .card.open {
     /* transform: rotate(0deg); */
     transition: ease 1s;
     background: var(--blue);
     cursor: default;
-    font-size: 33px;
+    font-size: var(--font_size);
 }
 
 .deck .card.show {
-    font-size: 33px;
+    font-size: 40px;
 }
 
 .deck .card.match {
     cursor: default;
-    background: var(--white);
-    color: var(--black)
-    /* font-size: 0; */
+    color: var(--white);
+    font-size: 0;
+    border: dashed 2px var(--deep_blue);
 }
 
 .deck .card.notmatch {
@@ -103,7 +133,7 @@ h1 {
     transition: shake 1s;
     background: var(--red);
     cursor: default;
-    font-size: 33px;
+    font-size: var(--font_size);
 }
 
 /*
@@ -111,8 +141,10 @@ h1 {
  */
 
 .score-panel {
-    text-align: left;
-    width: 345px;
+    position: absolute;
+    color: var(--white);
+    text-align: center;
+    width: calc(var(--deck_size) / 2);
     margin-bottom: 10px;
 }
 
@@ -123,14 +155,20 @@ h1 {
     margin: 0 5px 0 0;
 }
 
-.score-panel .stars li {
+/* .score-panel */
+.stars div {
+    /* position: absolute; */
+    /* top: 50%; */
+    /* left: 50%; */
     list-style: none;
     display: inline-block;
 }
 
 .score-panel .restart {
-    float: right;
+    /* float: right; */
     cursor: pointer;
+    font-size: calc(var(--font_size) * 0.5);
+
 }
 
 /*

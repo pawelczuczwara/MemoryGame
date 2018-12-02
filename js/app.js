@@ -25,7 +25,12 @@ let stars_cur = 0; //hollow stars count
 let moves_cur = 0; //moves count
 let open_card_list = []; //list of open cards to match - max 2
 
+function deck90() {
+    deck.classList.toggle('r90');
+}
+
 // ------------------ Cards initial layout -----------------------
+
 
 function removeCards() {
     while (deck.firstChild) {
@@ -37,13 +42,15 @@ function createCards() {
     const deck_content = document.createDocumentFragment();
     // duplicates symbols to match cards numer and shuffles them
     symbols = shuffle([...symbols_def, ...symbols_def]);
-
+    let i = 1;
     for (let symbol of symbols) {
-        card_list = document.createElement('li');
+        card_list = document.createElement('div');
         card_list.classList.add('card');
+        card_list.classList.add('n' + i);
         // creates element with font awesome defined in CSS
-        card_list.innerHTML = `<i class="fas fa-${symbol}"></i>`;
+        card_list.innerHTML = `<div class="fas fa-${symbol}"></div>`;
         deck_content.appendChild(card_list);
+        i++
     }
 
     deck.appendChild(deck_content);
@@ -103,7 +110,8 @@ function openCard(cur_card) {
 function clickCard(event) {
     let cur_card = event.target;
     // check if the card was clicked & is not yet matched
-    if ((cur_card.tagName === 'LI') && !(cur_card.classList.contains('match'))) {
+    console.log(cur_card.classList.value);
+    if (cur_card.classList.contains('card')) {
         openCard(cur_card);
         checkMatch(cur_card);
         addMoves();
@@ -177,9 +185,9 @@ function getStars() {
     let stars_html = '';
     for (star_level of stars_def) {
         if (star_level > moves_cur) {
-            stars_html = stars_html + `<li><i class="fas fa-star"></i></li>`;
+            stars_html = stars_html + `<div><i class="fas fa-star"></i></div>`;
         } else {
-            stars_html = stars_html + `<li><i class="far fa-star"></i></li>`;
+            stars_html = stars_html + `<div><i class="far fa-star"></i></div>`;
         }
     }
     stars_frag.innerHTML = stars_html;
