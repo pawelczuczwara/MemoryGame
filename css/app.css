@@ -1,11 +1,17 @@
 :root {
     /* colors */
-    --black: #181818;
+    /* deck background 1 */
+    --black: #0B032D;
+    /* symbols, fonts  */
     --white: #ffffff;
-    --grey: #2e3d49;
-    --blue: #02b3e4;
-    --deep_blue: #007697;
-    --red: #631010;
+    /* cards background, deck border, deck back 2 */
+    --grey: #843b62;
+    /* background for: body, card.match, card:hover, deck border */
+    --blue: #ffb997;
+    /* card hover */
+    --deep_blue: #f67e7d;
+    /* card nomatch */
+    --red: #ff0000;
 
     /* deck and card sizes */
     --vw: 100vw;
@@ -15,6 +21,10 @@
     --font_size: calc(var(--vw) * 0.04);
     --card_size-05: calc(var(--vw) * (-0.07));
     --move_card: calc(var(--vw) * 0.40);
+
+    /* transform variables for rotateY flipping cards */
+    --n1: 0deg; --n2: 0deg; --n3: 0deg; --n4: 0deg; --n5: 0deg; --n6: 0deg; --n7: 0deg; --n8: 0deg;
+    --n9: 0deg; --n10: 0deg; --n11: 0deg; --n12: 0deg; --n13: 0deg; --n14: 0deg; --n15: 0deg; --n16: 0deg;
 }
 
 html {
@@ -38,7 +48,6 @@ body {
 }
 
 body {
-    background: var(--white) ; /* Background pattern from Subtle Patterns */
     font-family: 'Coda', cursive;
     background: var(--blue);
 }
@@ -54,6 +63,7 @@ header {
 h1 {
     font-family: 'Open Sans', sans-serif;
     font-weight: 200;
+    color: var(--grey);
 }
 
 /*
@@ -70,7 +80,7 @@ h1 {
     /* styling */
     background: var(--black);
     background: radial-gradient(circle at 200px 200px, var(--grey), var(--black));
-    border: solid 5px var(--grey);
+    border: solid 0px var(--grey);
     border-radius: 50%;
     margin: calc(var(--card_size) / 2) auto auto auto;
 
@@ -103,23 +113,28 @@ h1 {
     transition: ease 1s;
 }
 
+/* to "match" rotation of the card */
+.deck .card .fas {
+    transform: rotateY(-180deg);
+}
+
 /* position cards around the on the circle */
-.n1 { transform: translate(var(--move_card)); }
-.n2 { transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg); }
-.n3 { transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg); }
-.n4 { transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg); }
-.n5 { transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg); }
-.n6 { transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg); }
-.n7 { transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg); }
-.n8 { transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg); }
-.n9 { transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg); }
-.n10 { transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg); }
-.n11 { transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg); }
-.n12 { transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg); }
-.n13 { transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg); }
-.n14 { transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg); }
-.n15 { transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg); }
-.n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg); }
+.n1 { transform: translate(var(--move_card)) rotateY(var(--n1)); }
+.n2 { transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg) rotateY(var(--n2)); }
+.n3 { transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg) rotateY(var(--n3)); }
+.n4 { transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg) rotateY(var(--n4)); }
+.n5 { transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg) rotateY(var(--n5)); }
+.n6 { transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg) rotateY(var(--n6)); }
+.n7 { transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg) rotateY(var(--n7)); }
+.n8 { transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg) rotateY(var(--n8)); }
+.n9 { transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg) rotateY(var(--n9)); }
+.n10 { transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg) rotateY(var(--n10)); }
+.n11 { transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg) rotateY(var(--n11)); }
+.n12 { transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg) rotateY(var(--n12)); }
+.n13 { transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg) rotateY(var(--n13)); }
+.n14 { transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg) rotateY(var(--n14)); }
+.n15 { transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg) rotateY(var(--n15)); }
+.n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg) rotateY(var(--n16)); }
 
 
 .deck .card:hover {
@@ -177,19 +192,21 @@ h1 {
 
 /* .score-panel */
 .stars div {
-    /* position: absolute; */
-    /* top: 50%; */
-    /* left: 50%; */
+
     list-style: none;
     display: inline-block;
 }
 
+.score-panel .moves {
+    margin-bottom: 10px;
+}
+
 .score-panel .restart {
-    /* float: right; */
     cursor: pointer;
     font-size: calc(var(--symb_size) * 0.8);
 
 }
+
 
 /*
  * Styles for the Win Panel

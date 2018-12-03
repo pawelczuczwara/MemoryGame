@@ -1,11 +1,11 @@
 // ------------------ todo -----------------------
 // - animation of the cards - match, notmach - done
-// - grid or flex inside of the deck
-// - change colors
-// - add clock
+// - change colors - done
+// - add clock - done
+// - make rsponsive - done
 // - add start animation
-// - make rsponsive 
-
+// - change font
+// - win message make popup
 
 // ------------------ consts & variables -----------------------
 
@@ -27,24 +27,50 @@ const restart = document.querySelector('.restart');
 const matched = document.querySelector('.matched');
 const moves_node = document.querySelector('.moves');
 const stars_node = document.querySelector('.stars');
+const score_node = document.querySelector('.score-panel');
 
+//game functionality variables
 const stars_def = [30,40,50,60,70]; //tresholds to subsract stars
 let stars_cur = 0; //lost points - stars count
 let moves_cur = 0; //moves count
 let open_card_list = []; //list of open cards to match - max 2
 
-function deck90() {
-    deck.classList.toggle('r90');
+// css variable acces
+let root = document.documentElement;
+
+// timer variables and node
+const time_node = document.querySelector(".time");
+let time_interval;
+let time_started = false;
+
+// ------------------ Utilities -----------------------
+
+function flipCard(nr, deg) {
+    root.style.setProperty("--" + nr, deg + "deg");
+}
+
+function removeChilds(node) {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+}
+
+// Shuffle function from http://stackoverflow.com/a/2450976
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
 }
 
 // ------------------ Cards initial layout -----------------------
-
-
-function removeCards() {
-    while (deck.firstChild) {
-        deck.removeChild(deck.firstChild);
-    }
-}
 
 function createCards() {
     const deck_content = document.createDocumentFragment();
@@ -64,21 +90,6 @@ function createCards() {
     deck.appendChild(deck_content);
 }
 
-// Shuffle function from http://stackoverflow.com/a/2450976
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-
 // ------------------------ Card Matching ---------------------------
 
 function checkMatch(cur_card) {
@@ -96,17 +107,24 @@ function checkMatch(cur_card) {
 }
 
 function updateNoMatch(cards) {
+    score_node.classList.toggle('animated');
+    score_node.classList.toggle('shake');
     for (card of cards) {
         card.classList.toggle('nomatch');
     }
+    console.log("notmat")
     setTimeout(() => { closeCards(cards); }, 1000);
 }
 
 function closeCards(cards) {
+    console.log("toggle");
     for (card of cards) {
         card.classList.toggle('open');
         card.classList.toggle('nomatch');
+        flipCard(card.classList.item(1), 0);
     }
+    score_node.classList.toggle('animated');
+    score_node.classList.toggle('shake');
 }
 
 function updateMatch(cards) {
@@ -120,13 +138,15 @@ function updateMatch(cards) {
 
 function openCard(cur_card) {
     cur_card.classList.toggle('open');
+    flipCard(cur_card.classList.item(1), 180);
     open_card_list.push(cur_card);
 }
 
 function clickCard(event) {
+    (time_started) ? "" : startTime();
     let cur_card = event.target;
     // check if the card was clicked & is not yet matched
-    console.log(cur_card.classList.value);
+    // console.log(cur_card.classList.value);
     if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch'))) {
         openCard(cur_card);
         checkMatch(cur_card);
@@ -147,11 +167,9 @@ function countMatch() {
 }
 
 function addMoves() {
-    moves_cur += 1;
-    moves_node.textContent = moves_cur;
+    // moves_cur += 1;
+    moves_node.textContent = moves_cur += 1;
     updateStars();
-    // removeStars();
-    // getStars();
 }
 
 function resetMoves() {
@@ -166,7 +184,8 @@ function showMatchWin() {
     if (x === deck.childNodes.length) {
         console.log('win win');
         setTimeout(() => {
-            removeCards();
+            removeChilds(deck);
+            // removeCards();
             showScores();
         },
         1000);
@@ -176,6 +195,8 @@ function showMatchWin() {
 function showScores() {
     let deck_content = document.createDocumentFragment();
     let scores = document.createElement('span');
+    // stop timer
+    clearInterval(time_interval);
     scores.classList.add('win');
 
     scores.innerHTML = `<h1>YOU WIN !!!</h1>
@@ -189,11 +210,6 @@ function showScores() {
 
 // ---------------- Stars -----------------
 
-function removeStars() {
-    while (stars_node.firstChild) {
-        stars_node.removeChild(stars_node.firstChild);
-    }
-}
 
 // generate stars
 function getStars() {
@@ -222,38 +238,54 @@ function updateStars() {
     if (stars_cur < new_stars) {
         stars_cur = new_stars;
         console.log(stars_cur);
-        removeStars();
+        removeChilds(stars_node);
         getStars();
     }
 }
 
 
-// ---------------- Game init -----------------
+// ---------------- timer -----------------
+
+function startTime(){
+    let time_sec = 0;
+    let time_min = 0;
+    time_started = true;
+    time_interval = setInterval(function(){
+        let s_pref = (time_sec < 10) ? "0" : "";
+        let m_pref = (time_min < 10) ? "0" : "";
+        time_node.innerHTML = m_pref + time_min + ":" + s_pref + time_sec;
+        time_sec++;
+        if(time_sec == 60){
+            time_min++;
+            time_sec = 0;
+        }
+    },1000);
+}
+
+function resetTime() {
+    clearInterval(time_interval);
+    time_node.innerHTML = "00:00";
+    time_started = false;
+}
+
+// ---------------- Game init / restart -----------------
 
 function restartGame() {
-    removeCards();
+    removeChilds(deck);
     createCards();
+
     resetMoves();
     showMatchWin();
-    removeStars();
+
+    removeChilds(stars_node);
     getStars();
+
+    resetTime();
 }
+
 restartGame()
+
 
 restart.addEventListener('click', restartGame);
 deck.addEventListener('click', clickCard);
-/*
-* Display the cards on the page
-*   - shuffle the list of cards using the provided "shuffle" method below
-*   - loop through each card and create its HTML
-*   - add each card's HTML to the page
 
-* set up the event listener for a card. If a card is clicked:
-*  - display the card's symbol (put this functionality in another function that you call from this one)
-*  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
-*  - if the list already has another card, check to see if the two cards match
-*    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
-*    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
-*    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
-*    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
-*/
