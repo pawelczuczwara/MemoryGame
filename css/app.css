@@ -1,14 +1,25 @@
 :root {
+    /* colors */
     --black: #181818;
     --white: #ffffff;
     --grey: #2e3d49;
     --blue: #02b3e4;
-    --deep_blue: #00a5d3;
+    --deep_blue: #007697;
     --red: #631010;
+
+    /* deck and card sizes */
+    --vw: 100vw;
+    --deck_size: calc(var(--vw) * 0.78);
+    --card_size: calc(var(--vw) * 0.14);
+    --symb_size: calc(var(--vw) * 0.10);
+    --font_size: calc(var(--vw) * 0.04);
+    --card_size-05: calc(var(--vw) * (-0.07));
+    --move_card: calc(var(--vw) * 0.40);
 }
 
 html {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 *,
@@ -32,7 +43,8 @@ body {
     background: var(--blue);
 }
 
-.container {
+.container,
+header {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -48,29 +60,27 @@ h1 {
  * Styles for the deck of cards
  */
 
-:root {
-    --deck_size: 78vw;
-    --card_size: 14vw;
-    --font_size: 10vw;
-    --card_size-05: -7vw;
-    --move_card: 40vw;
-}
-
 .deck {
-    width: var(--deck_size);
-    padding-top: var(--deck_size);
-    background: var(--black);
-    /* background: radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
+    /* geometry */
     position: relative;
-    /* border: solid 25px var(--grey); */
+    width: var(--deck_size);
+    /* padding-top gives height to the deck */
+    padding-top: var(--deck_size);
+
+    /* styling */
+    background: var(--black);
+    background: radial-gradient(circle at 200px 200px, var(--grey), var(--black));
+    border: solid 5px var(--grey);
     border-radius: 50%;
+    margin: calc(var(--card_size) / 2) auto auto auto;
+
+    /* inside elements aligment */
     display: grid;
-    margin: 100px auto auto auto;
 }
 
 .deck .card {
+    /* geometry - to position cards in center of the deck */
     display: block;
-    /* to position cards in center of the deck */
     overflow: hidden;
     position: absolute;
     top: 50%;
@@ -79,7 +89,7 @@ h1 {
     width: var(--card_size);
     margin: var(--card_size-05);
 
-    /* to style and position interior of the cards */
+    /* styling - to style and position interior of the cards */
     background: var(--grey);
     font-size: 0em;
     color: var(--white);
@@ -88,6 +98,9 @@ h1 {
     display: flex;
     justify-content: center;
     align-items:center;
+    /*  transitions */
+    /* transition: background-color 1s ease-out; */
+    transition: ease 1s;
 }
 
 /* position cards around the on the circle */
@@ -109,31 +122,37 @@ h1 {
 .n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg); }
 
 
+.deck .card:hover {
+    background: var(--deep_blue);
+}
+
 .deck .card.open {
     /* transform: rotate(0deg); */
-    transition: ease 1s;
+    /* transition: ease 1s; */
     background: var(--blue);
     cursor: default;
-    font-size: var(--font_size);
+    font-size: var(--symb_size);
 }
 
 .deck .card.show {
-    font-size: 40px;
+    /* transition: ease 1s; */
+    font-size: var(--symb_size);
 }
 
 .deck .card.match {
+    /* transition: ease 1s; */
     cursor: default;
     color: var(--white);
     font-size: 0;
     border: dashed 2px var(--deep_blue);
 }
 
-.deck .card.notmatch {
-    transform: scale(0.8);
-    transition: shake 1s;
+.deck .card.nomatch {
+    /* transition: shake 1s; */
+    transition: ease 1s;
     background: var(--red);
     cursor: default;
-    font-size: var(--font_size);
+    font-size: var(--symb_size);
 }
 
 /*
@@ -143,9 +162,10 @@ h1 {
 .score-panel {
     position: absolute;
     color: var(--white);
+    font-size: var(--font_size);
     text-align: center;
     width: calc(var(--deck_size) / 2);
-    margin-bottom: 10px;
+    margin: 10px 10px auto auto;
 }
 
 .score-panel .stars {
@@ -167,7 +187,7 @@ h1 {
 .score-panel .restart {
     /* float: right; */
     cursor: pointer;
-    font-size: calc(var(--font_size) * 0.5);
+    font-size: calc(var(--symb_size) * 0.8);
 
 }
 
@@ -184,3 +204,27 @@ h1 {
     flex-direction: column;
     color: var(--white);
 }
+
+/* ------------------------ media query ----------------------------- */
+
+/* On screens 0-300px */
+@media screen and (max-width: 300px) {
+    :root {
+        --vw: 300px;
+    }
+}
+
+/* On screens 300-400px */
+@media screen and (max-width: 400px) {
+    :root {
+        --font_size: calc(var(--vw) * 0.04);
+    }
+}
+
+/* On screens above 600px */
+@media screen and (min-width: 600px) {
+    :root {
+        --vw: 600px;
+    }
+}
+

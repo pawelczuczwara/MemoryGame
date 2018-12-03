@@ -1,3 +1,11 @@
+// ------------------ todo -----------------------
+// - animation of the cards - match, notmach - done
+// - grid or flex inside of the deck
+// - change colors
+// - add clock
+// - add start animation
+// - make rsponsive 
+
 
 // ------------------ consts & variables -----------------------
 
@@ -21,7 +29,7 @@ const moves_node = document.querySelector('.moves');
 const stars_node = document.querySelector('.stars');
 
 const stars_def = [30,40,50,60,70]; //tresholds to subsract stars
-let stars_cur = 0; //hollow stars count
+let stars_cur = 0; //lost points - stars count
 let moves_cur = 0; //moves count
 let open_card_list = []; //list of open cards to match - max 2
 
@@ -80,26 +88,34 @@ function checkMatch(cur_card) {
     let list_elem = open_card_list[0].querySelector('.fas')
     //check if cards symbols match
     if (click_elem.classList.value === list_elem.classList.value) {
-        updateMatch();
+        updateMatch(open_card_list);
     } else {
-        setTimeout(closeCards, 1000);
+        updateNoMatch(open_card_list);
     }
+    open_card_list = []
 }
 
-function closeCards() {
-    console.log('close cards')
-    for (card of open_card_list) {
+function updateNoMatch(cards) {
+    for (card of cards) {
+        card.classList.toggle('nomatch');
+    }
+    setTimeout(() => { closeCards(cards); }, 1000);
+}
+
+function closeCards(cards) {
+    for (card of cards) {
         card.classList.toggle('open');
+        card.classList.toggle('nomatch');
     }
-    open_card_list = [];
 }
 
-function updateMatch() {
-    for (card of open_card_list) {
-        card.classList.toggle('match');
-    }
-    open_card_list = [];
-    showMatchWin();
+function updateMatch(cards) {
+    setTimeout(() => {
+        for (card of cards) {
+            card.classList.toggle('match');
+        }
+        showMatchWin();
+    }, 1000);
 }
 
 function openCard(cur_card) {
@@ -111,7 +127,7 @@ function clickCard(event) {
     let cur_card = event.target;
     // check if the card was clicked & is not yet matched
     console.log(cur_card.classList.value);
-    if (cur_card.classList.contains('card')) {
+    if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch'))) {
         openCard(cur_card);
         checkMatch(cur_card);
         addMoves();
