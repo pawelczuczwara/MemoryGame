@@ -7,9 +7,9 @@
     /* cards background, deck border, deck back 2 */
     --grey: #843b62;
     /* background for: body, card.match, card:hover, deck border */
-    --blue: #ffb997;
+    --blue: #c28ed1;
     /* card hover */
-    --deep_blue: #f67e7d;
+    --deep_blue: #916a9c;
     /* card nomatch */
     --red: #ff0000;
 
@@ -20,7 +20,7 @@
     --symb_size: calc(var(--vw) * 0.10);
     --font_size: calc(var(--vw) * 0.04);
     --card_size-05: calc(var(--vw) * (-0.07));
-    --move_card: calc(var(--vw) * 0.40);
+    --move_card: calc(var(--vw) * 0.41);
 
     /* transform variables for rotateY flipping cards */
     --n1: 0deg; --n2: 0deg; --n3: 0deg; --n4: 0deg; --n5: 0deg; --n6: 0deg; --n7: 0deg; --n8: 0deg;
@@ -44,12 +44,12 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    color: var(--white);
+    /* color: #843b62; */
 }
 
 body {
-    font-family: 'Coda', cursive;
-    background: var(--blue);
+    font-family: 'Roboto', sans-serif;
+    background: var(--black);
 }
 
 .container,
@@ -61,9 +61,9 @@ header {
 }
 
 h1 {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 200;
-    color: var(--grey);
+    color: var(--white);
 }
 
 /*
@@ -78,8 +78,9 @@ h1 {
     padding-top: var(--deck_size);
 
     /* styling */
-    background: var(--black);
     background: radial-gradient(circle at 200px 200px, var(--grey), var(--black));
+    background: url(/img/deck_back.jpg);
+    background-size: var(--deck_size);
     border: solid 0px var(--grey);
     border-radius: 50%;
     margin: calc(var(--card_size) / 2) auto auto auto;
@@ -100,7 +101,8 @@ h1 {
     margin: var(--card_size-05);
 
     /* styling - to style and position interior of the cards */
-    background: var(--grey);
+    background: var(--black);
+    border: solid 2px var(--blue);
     font-size: 0em;
     color: var(--white);
     border-radius: 50%;
@@ -144,7 +146,7 @@ h1 {
 .deck .card.open {
     /* transform: rotate(0deg); */
     /* transition: ease 1s; */
-    background: var(--blue);
+    background: var(--black);
     cursor: default;
     font-size: var(--symb_size);
 }
@@ -187,12 +189,11 @@ h1 {
     margin: 0;
     padding: 0;
     display: inline-block;
-    margin: 0 5px 0 0;
+    margin: calc(var(--symb_size) * 0.5) 5px 0 0;
 }
 
 /* .score-panel */
 .stars div {
-
     list-style: none;
     display: inline-block;
 }
@@ -204,6 +205,7 @@ h1 {
 .score-panel .restart {
     cursor: pointer;
     font-size: calc(var(--symb_size) * 0.8);
+    margin-top: calc(var(--symb_size) * 0.4);
 
 }
 

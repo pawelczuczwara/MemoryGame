@@ -45,6 +45,7 @@ let time_started = false;
 
 // ------------------ Utilities -----------------------
 
+//set css variable to rotate card
 function flipCard(nr, deg) {
     root.style.setProperty("--" + nr, deg + "deg");
 }
@@ -69,6 +70,16 @@ function shuffle(array) {
 
     return array;
 }
+
+//  play sound -----------------
+function playSound(sound) {
+    const audio = document.querySelector(`audio[data-key='${sound}']`);
+    if(!audio) return; //stop if no audio definition
+    audio.volume = 0.25;
+    audio.currentTime = 0; //rewind to start
+    audio.play();
+  }
+
 
 // ------------------ Cards initial layout -----------------------
 
@@ -112,12 +123,11 @@ function updateNoMatch(cards) {
     for (card of cards) {
         card.classList.toggle('nomatch');
     }
-    console.log("notmat")
+    playSound('bad');
     setTimeout(() => { closeCards(cards); }, 1000);
 }
 
 function closeCards(cards) {
-    console.log("toggle");
     for (card of cards) {
         card.classList.toggle('open');
         card.classList.toggle('nomatch');
@@ -128,6 +138,7 @@ function closeCards(cards) {
 }
 
 function updateMatch(cards) {
+    playSound('ok');
     setTimeout(() => {
         for (card of cards) {
             card.classList.toggle('match');
@@ -140,6 +151,7 @@ function openCard(cur_card) {
     cur_card.classList.toggle('open');
     flipCard(cur_card.classList.item(1), 180);
     open_card_list.push(cur_card);
+    playSound('flip');
 }
 
 function clickCard(event) {
@@ -147,7 +159,7 @@ function clickCard(event) {
     let cur_card = event.target;
     // check if the card was clicked & is not yet matched
     // console.log(cur_card.classList.value);
-    if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch'))) {
+    if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch')) && !(cur_card.classList.contains('match'))) {
         openCard(cur_card);
         checkMatch(cur_card);
         addMoves();
@@ -205,6 +217,7 @@ function showScores() {
     deck_content.appendChild(scores);
     deck_content.appendChild(stars_node);
     deck.appendChild(deck_content);
+    playSound('win');
 }
 
 
@@ -237,7 +250,7 @@ function updateStars() {
     }
     if (stars_cur < new_stars) {
         stars_cur = new_stars;
-        console.log(stars_cur);
+        // console.log(stars_cur);
         removeChilds(stars_node);
         getStars();
     }
@@ -267,6 +280,7 @@ function resetTime() {
     time_node.innerHTML = "00:00";
     time_started = false;
 }
+
 
 // ---------------- Game init / restart -----------------
 
