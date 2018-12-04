@@ -186,6 +186,7 @@ h1 {
     margin: calc(var(--symb_size) * 0.5) 5px 0 0;
 }
 
+
 /* .score-panel */
 .stars div {
     list-style: none;

@@ -1,6 +1,7 @@
 
 // ------------------ global consts & variables ---------------------
 
+
 //  list that holds all of cards symbols
 const symbols_def = [
     'chevron-circle-left',
