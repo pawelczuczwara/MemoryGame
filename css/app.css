@@ -44,7 +44,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    /* color: #843b62; */
+    color: var(--blue);
 }
 
 body {
@@ -63,7 +63,6 @@ header {
 h1 {
     font-family: 'Roboto', sans-serif;
     font-weight: 200;
-    color: var(--white);
 }
 
 /*
@@ -121,22 +120,22 @@ h1 {
 }
 
 /* position cards around the on the circle */
-.n1 { transform: translate(var(--move_card)) rotateY(var(--n1)); }
-.n2 { transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg) rotateY(var(--n2)); }
-.n3 { transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg) rotateY(var(--n3)); }
-.n4 { transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg) rotateY(var(--n4)); }
-.n5 { transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg) rotateY(var(--n5)); }
-.n6 { transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg) rotateY(var(--n6)); }
-.n7 { transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg) rotateY(var(--n7)); }
-.n8 { transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg) rotateY(var(--n8)); }
-.n9 { transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg) rotateY(var(--n9)); }
-.n10 { transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg) rotateY(var(--n10)); }
-.n11 { transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg) rotateY(var(--n11)); }
-.n12 { transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg) rotateY(var(--n12)); }
-.n13 { transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg) rotateY(var(--n13)); }
-.n14 { transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg) rotateY(var(--n14)); }
-.n15 { transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg) rotateY(var(--n15)); }
-.n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg) rotateY(var(--n16)); }
+.start.n1 { transform: translate(var(--move_card)) rotateY(var(--n1)); }
+.start.n2 { transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg) rotateY(var(--n2)); }
+.start.n3 { transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg) rotateY(var(--n3)); }
+.start.n4 { transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg) rotateY(var(--n4)); }
+.start.n5 { transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg) rotateY(var(--n5)); }
+.start.n6 { transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg) rotateY(var(--n6)); }
+.start.n7 { transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg) rotateY(var(--n7)); }
+.start.n8 { transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg) rotateY(var(--n8)); }
+.start.n9 { transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg) rotateY(var(--n9)); }
+.start.n10 { transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg) rotateY(var(--n10)); }
+.start.n11 { transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg) rotateY(var(--n11)); }
+.start.n12 { transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg) rotateY(var(--n12)); }
+.start.n13 { transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg) rotateY(var(--n13)); }
+.start.n14 { transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg) rotateY(var(--n14)); }
+.start.n15 { transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg) rotateY(var(--n15)); }
+.start.n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg) rotateY(var(--n16)); }
 
 
 .deck .card:hover {
@@ -144,20 +143,17 @@ h1 {
 }
 
 .deck .card.open {
-    /* transform: rotate(0deg); */
-    /* transition: ease 1s; */
+
     background: var(--black);
     cursor: default;
     font-size: var(--symb_size);
 }
 
 .deck .card.show {
-    /* transition: ease 1s; */
     font-size: var(--symb_size);
 }
 
 .deck .card.match {
-    /* transition: ease 1s; */
     cursor: default;
     color: var(--white);
     font-size: 0;
@@ -165,7 +161,6 @@ h1 {
 }
 
 .deck .card.nomatch {
-    /* transition: shake 1s; */
     transition: ease 1s;
     background: var(--red);
     cursor: default;
@@ -206,7 +201,6 @@ h1 {
     cursor: pointer;
     font-size: calc(var(--symb_size) * 0.8);
     margin-top: calc(var(--symb_size) * 0.4);
-
 }
 
 
@@ -215,13 +209,41 @@ h1 {
  */
 
 .win {
-    width: 100%;
-    display: flex;
+    /* geometry */
+    position: absolute;
+    height: var(--deck_size);
+    width: var(--deck_size);
+    border-radius: 50%;
+    z-index: 10;
+
+    /* styling */
+    background: radial-gradient(circle at 200px 200px, var(--grey), var(--black));
+    background: url(/img/deck_back.jpg);
+    background-size: var(--deck_size);
+    font-size: var(--font_size);
+    color: var(--white);
+    text-align: center;
+
+    /* position elements inside */
+    display: grid;
     justify-content: center;
     justify-items: center;
     align-items: center;
-    flex-direction: column;
-    color: var(--white);
+    padding: 20%;
+
+    transition: ease 1s;
+}
+
+.win .stars {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.win .sco_restart {
+    cursor: pointer;
+    font-size: calc(var(--symb_size) * 0.8);
+    margin-top: calc(var(--symb_size) * 0.4);
 }
 
 /* ------------------------ media query ----------------------------- */

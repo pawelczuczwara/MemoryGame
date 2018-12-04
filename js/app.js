@@ -1,13 +1,5 @@
-// ------------------ todo -----------------------
-// - animation of the cards - match, notmach - done
-// - change colors - done
-// - add clock - done
-// - make rsponsive - done
-// - add start animation
-// - change font
-// - win message make popup
 
-// ------------------ consts & variables -----------------------
+// ------------------ global consts & variables ---------------------
 
 //  list that holds all of cards symbols
 const symbols_def = [
@@ -33,6 +25,7 @@ const score_node = document.querySelector('.score-panel');
 const stars_def = [30,40,50,60,70]; //tresholds to subsract stars
 let stars_cur = 0; //lost points - stars count
 let moves_cur = 0; //moves count
+let match_cur = 0; //matched cards
 let open_card_list = []; //list of open cards to match - max 2
 
 // css variable acces
@@ -99,6 +92,14 @@ function createCards() {
     }
 
     deck.appendChild(deck_content);
+}
+
+// positon cards around circle
+function startCards() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(function(card) {
+        card.classList.toggle('start');
+    });
 }
 
 // ------------------------ Card Matching ---------------------------
@@ -179,25 +180,26 @@ function countMatch() {
 }
 
 function addMoves() {
-    // moves_cur += 1;
-    moves_node.textContent = moves_cur += 1;
+    moves_cur += 1;
+    moves_node.textContent = moves_cur;
     updateStars();
 }
 
 function resetMoves() {
     moves_cur = 0;
+    match_cur = 0;
     moves_node.textContent = moves_cur;
 }
 
 // show winner moves and stars count
 function showMatchWin() {
-    let x = countMatch();
-    matched.textContent = x;
-    if (x === deck.childNodes.length) {
+    match_cur = countMatch();
+    matched.textContent = match_cur;
+    if (match_cur === 16) {
         console.log('win win');
         setTimeout(() => {
-            removeChilds(deck);
-            // removeCards();
+            // removeChilds(deck);
+            // startCards();
             showScores();
         },
         1000);
@@ -205,24 +207,34 @@ function showMatchWin() {
 }
 
 function showScores() {
-    let deck_content = document.createDocumentFragment();
-    let scores = document.createElement('span');
     // stop timer
     clearInterval(time_interval);
-    scores.classList.add('win');
+    //hide cards
+    startCards();
 
-    scores.innerHTML = `<h1>YOU WIN !!!</h1>
-                        <h1>Your moves: ${moves_node.textContent}</h1>`;
+    let sco_content = document.createElement('div');
+    sco_content.classList.add('win');
 
-    deck_content.appendChild(scores);
-    deck_content.appendChild(stars_node);
-    deck.appendChild(deck_content);
+    const sco_moves = moves_node.textContent;
+    const sco_stars = stars_node.innerHTML;
+    const sco_time = time_node.textContent;
+
+    sco_content.innerHTML = `<span><strong>YOU ARE A WINNNER !!!</strong></span>
+                            <div>Your moves: ${sco_moves}</div>
+                            <div class="stars">Stars: ${sco_stars}</div>
+                            <div>Time: ${sco_time}</div>
+                            <div class="sco_restart">
+                                <i class="fa fa-redo-alt"></i>
+                            </div>`;
+
+    deck.appendChild(sco_content);
+    let sco_restart = document.querySelector('.sco_restart');
+    sco_restart.addEventListener('click', restartGame);
     playSound('win');
 }
 
 
 // ---------------- Stars -----------------
-
 
 // generate stars
 function getStars() {
@@ -239,6 +251,7 @@ function getStars() {
     stars_node.appendChild(stars_frag);
 
 }
+
 // update stars ONLY on treshold from stars_def
 function updateStars() {
     let new_stars = 0;
@@ -250,7 +263,7 @@ function updateStars() {
     }
     if (stars_cur < new_stars) {
         stars_cur = new_stars;
-        // console.log(stars_cur);
+        console.log(stars_cur);
         removeChilds(stars_node);
         getStars();
     }
@@ -286,7 +299,9 @@ function resetTime() {
 
 function restartGame() {
     removeChilds(deck);
+
     createCards();
+    setTimeout(startCards, 0);
 
     resetMoves();
     showMatchWin();
@@ -297,7 +312,7 @@ function restartGame() {
     resetTime();
 }
 
-restartGame()
+restartGame();
 
 
 restart.addEventListener('click', restartGame);
