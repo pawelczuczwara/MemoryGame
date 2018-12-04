@@ -77,7 +77,8 @@ h1 {
     padding-top: var(--deck_size);
 
     /* styling */
-    background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black));
+    /* background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
+    background: url(../img/deck_back.jpg);
     background-size: var(--deck_size);
     border: solid 0px var(--grey);
     border-radius: 50%;
@@ -217,7 +218,8 @@ h1 {
     z-index: 10;
 
     /* styling */
-    background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black));
+    /* background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
+    background: url(../img/deck_back.jpg);
     background-size: var(--deck_size);
     font-size: var(--font_size);
     color: var(--white);
