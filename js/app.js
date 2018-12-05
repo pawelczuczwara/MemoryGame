@@ -1,7 +1,6 @@
 'use strict';
 // ------------------ global consts & variables ---------------------
 
-
 //  list that holds all of cards symbols
 const symbols_def = [
     'chevron-circle-left',
@@ -142,7 +141,7 @@ function closeCards(cards) {
 function updateMatch(cards) {
     playSound('ok');
     setTimeout(() => {
-        for (card of cards) {
+        for (let card of cards) {
             card.classList.toggle('match');
         }
         showMatchWin();
