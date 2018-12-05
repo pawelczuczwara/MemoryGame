@@ -1,4 +1,4 @@
-
+'use strict';
 // ------------------ global consts & variables ---------------------
 
 
@@ -72,7 +72,7 @@ function playSound(sound) {
     audio.volume = 0.25;
     audio.currentTime = 0; //rewind to start
     audio.play();
-  }
+}
 
 
 // ------------------ Cards initial layout -----------------------
@@ -80,10 +80,10 @@ function playSound(sound) {
 function createCards() {
     const deck_content = document.createDocumentFragment();
     // duplicates symbols to match cards numer and shuffles them
-    symbols = shuffle([...symbols_def, ...symbols_def]);
+    let symbols = shuffle([...symbols_def, ...symbols_def]);
     let i = 1;
     for (let symbol of symbols) {
-        card_list = document.createElement('div');
+        let card_list = document.createElement('div');
         card_list.classList.add('card');
         card_list.classList.add('n' + i);
         // creates element with font awesome defined in CSS
@@ -122,7 +122,7 @@ function checkMatch(cur_card) {
 function updateNoMatch(cards) {
     score_node.classList.toggle('animated');
     score_node.classList.toggle('shake');
-    for (card of cards) {
+    for (let card of cards) {
         card.classList.toggle('nomatch');
     }
     playSound('bad');
@@ -130,7 +130,7 @@ function updateNoMatch(cards) {
 }
 
 function closeCards(cards) {
-    for (card of cards) {
+    for (let card of cards) {
         card.classList.toggle('open');
         card.classList.toggle('nomatch');
         flipCard(card.classList.item(1), 0);
@@ -241,7 +241,7 @@ function showScores() {
 function getStars() {
     let stars_frag = document.createElement('span');
     let stars_html = '';
-    for (star_level of stars_def) {
+    for (let star_level of stars_def) {
         if (star_level > moves_cur) {
             stars_html = stars_html + `<div><i class="fas fa-star"></i></div>`;
         } else {
