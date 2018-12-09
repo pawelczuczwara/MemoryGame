@@ -26,7 +26,6 @@ const cardDef = {
     openCard: function openCard(cur_card) {
         cur_card.classList.toggle('open');
         this.flipCard(cur_card.classList.item(1), 180);
-        playSound('flip');
     },
 
     closeCards: function closeCards(cards) {
@@ -34,7 +33,6 @@ const cardDef = {
             card.classList.toggle('open');
             card.classList.toggle('nomatch');
             this.flipCard(card.classList.item(1), 0);
-            playSound('flip');
         }
     }
 };
@@ -149,6 +147,7 @@ function updateNoMatch(cards) {
     playSound('bad');
     setTimeout(() => {
         cardDef.closeCards(cards);
+        playSound('flip');
         scoresDef.shakePanel();
     }, 1000);
 }
@@ -172,6 +171,7 @@ function clickCard(event) {
     // console.log(cur_card.classList.value);
     if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch')) && !(cur_card.classList.contains('match'))) {
         cardDef.openCard(cur_card);
+        playSound('flip');
         scoresDef.open_card_list.push(cur_card);
         checkMatch(cur_card);
         addMoves(scoresDef);
