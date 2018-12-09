@@ -17,8 +17,26 @@ const cardDef = {
         'adjust',
         'cloud-sun'
     ],
-    rotate_nr: '',
-    rotate_deg: ''
+
+    flipCard: function flipCard(card_nr, rotate_deg) {
+        let root = document.documentElement;
+        root.style.setProperty("--" + card_nr, rotate_deg + "deg");
+    },
+
+    openCard: function openCard(cur_card) {
+        cur_card.classList.toggle('open');
+        this.flipCard(cur_card.classList.item(1), 180);
+        playSound('flip');
+    },
+
+    closeCards: function closeCards(cards) {
+        for (let card of cards) {
+            card.classList.toggle('open');
+            card.classList.toggle('nomatch');
+            this.flipCard(card.classList.item(1), 0);
+            playSound('flip');
+        }
+    }
 };
 
 //game scores variables
@@ -30,7 +48,12 @@ const scoresDef = {
     stars_cur: 0, //lost points - stars count
     moves_cur: 0, //moves count
     match_cur: 0, //matched cards
-    open_card_list: [] //list of open cards to match - max 2
+    open_card_list: [], //list of open cards to match - max 2
+
+    shakePanel: function () {
+        this.score_node.classList.toggle('animated');
+        this.score_node.classList.toggle('shake');
+    }
 }
 
 // timerDef variables and node
@@ -41,13 +64,6 @@ const timerDef = {
 }
 
 // ------------------ Utilities -----------------------
-
-//set css variable to rotate card
-function flipCard(card) {
-    // css variable acces
-    let root = document.documentElement;
-    root.style.setProperty("--" + card.rotate_nr, card.rotate_deg + "deg");
-}
 
 function removeChilds(node) {
     while (node.firstChild) {
@@ -131,18 +147,12 @@ function updateNoMatch(cards) {
         card.classList.toggle('nomatch');
     }
     playSound('bad');
-    setTimeout(() => { closeCards(cards); }, 1000);
+    setTimeout(() => {
+        cardDef.closeCards(cards);
+        scoresDef.shakePanel();
+    }, 1000);
 }
 
-function closeCards(cards) {
-    for (let card of cards) {
-        card.classList.toggle('open');
-        card.classList.toggle('nomatch');
-        flipCard(card.classList.item(1), 0);
-    }
-    scoresDef.score_node.classList.toggle('animated');
-    scoresDef.score_node.classList.toggle('shake');
-}
 
 function updateMatch(cards) {
     playSound('ok');
@@ -154,14 +164,6 @@ function updateMatch(cards) {
     }, 1000);
 }
 
-function openCard(cur_card) {
-    cur_card.classList.toggle('open');
-    cardDef.rotate_nr = (cur_card.classList.item(1));
-    cardDef.rotate_deg = 180;
-    flipCard(cardDef);
-    scoresDef.open_card_list.push(cur_card);
-    playSound('flip');
-}
 
 function clickCard(event) {
     (timerDef.time_started) ? "" : startTime(timerDef);
@@ -169,7 +171,8 @@ function clickCard(event) {
     // check if the card was clicked & is not yet matched
     // console.log(cur_card.classList.value);
     if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch')) && !(cur_card.classList.contains('match'))) {
-        openCard(cur_card);
+        cardDef.openCard(cur_card);
+        scoresDef.open_card_list.push(cur_card);
         checkMatch(cur_card);
         addMoves(scoresDef);
     }
@@ -177,7 +180,7 @@ function clickCard(event) {
 
 // ----------------- Scores ---------------------
 
-function countMatch(deck) {
+function countMatch() {
     let count = 0;
     deck.childNodes.forEach(function(node) {
         if (node.classList.contains('match')) {
@@ -200,15 +203,13 @@ function resetMoves(scores) {
 }
 
 // show winner moves and stars count
-function showMatchWin(scores, deck) {
-    scores.match_cur = countMatch(deck);
+function showMatchWin(scores) {
+    scoresDef.match_cur = countMatch();
     const matched = document.querySelector('.matched');
-    matched.textContent = scores.match_cur;
-    if (scores.match_cur === 16) {
+    matched.textContent = scoresDef.match_cur;
+    if (scoresDef.match_cur === 16) {
         console.log('win win');
         setTimeout(() => {
-            // removeChilds(deck);
-            // startCards();
             showScores();
         },
         1000);
@@ -226,7 +227,7 @@ function showScores() {
 
     const sco_moves = scoresDef.moves_node.textContent;
     const sco_stars = scoresDef.stars_node.innerHTML;
-    const sco_time = scoresDef.timerDef.time_node.textContent;
+    const sco_time = timerDef.time_node.textContent;
 
     sco_content.innerHTML = `<span><strong>YOU ARE A WINNNER !!!</strong></span>
                             <div>Your moves: ${sco_moves}</div>
