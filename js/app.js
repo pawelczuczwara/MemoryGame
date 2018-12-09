@@ -1,46 +1,52 @@
 'use strict';
 // ------------------ global consts & variables ---------------------
-
-//  list that holds all of cards symbols
-const symbols_def = [
-    'chevron-circle-left',
-    'clock',
-    'check-circle',
-    'dragon',
-    'eye',
-    'compass',
-    'adjust',
-    'cloud-sun'
-];
-
-// DOM nodes to manipulate
+// DOM nodes
 const deck = document.querySelector('.deck');
 const restart = document.querySelector('.restart');
-const matched = document.querySelector('.matched');
-const moves_node = document.querySelector('.moves');
-const stars_node = document.querySelector('.stars');
-const score_node = document.querySelector('.score-panel');
 
-//game functionality variables
-const stars_def = [30,40,50,60,70]; //tresholds to subsract stars
-let stars_cur = 0; //lost points - stars count
-let moves_cur = 0; //moves count
-let match_cur = 0; //matched cards
-let open_card_list = []; //list of open cards to match - max 2
+//  cards symbols and variables
+const cardDef = {
+    cards: document.querySelectorAll('.card'),
+    symbols_def: [
+        'chevron-circle-left',
+        'clock',
+        'check-circle',
+        'dragon',
+        'eye',
+        'compass',
+        'adjust',
+        'cloud-sun'
+    ],
+    rotate_nr: '',
+    rotate_deg: ''
+};
 
-// css variable acces
-let root = document.documentElement;
+//game scores variables
+const scoresDef = {
+    score_node: document.querySelector('.score-panel'),
+    moves_node: document.querySelector('.moves'),
+    stars_node: document.querySelector('.stars'),
+    stars_def: [30,40,50,60,70], //tresholds to subsract stars
+    stars_cur: 0, //lost points - stars count
+    moves_cur: 0, //moves count
+    match_cur: 0, //matched cards
+    open_card_list: [] //list of open cards to match - max 2
+}
 
-// timer variables and node
-const time_node = document.querySelector(".time");
-let time_interval;
-let time_started = false;
+// timerDef variables and node
+const timerDef = {
+    time_node: document.querySelector(".time"),
+    time_interval: '',
+    time_started: false
+}
 
 // ------------------ Utilities -----------------------
 
 //set css variable to rotate card
-function flipCard(nr, deg) {
-    root.style.setProperty("--" + nr, deg + "deg");
+function flipCard(card) {
+    // css variable acces
+    let root = document.documentElement;
+    root.style.setProperty("--" + card.rotate_nr, card.rotate_deg + "deg");
 }
 
 function removeChilds(node) {
@@ -64,9 +70,9 @@ function shuffle(array) {
     return array;
 }
 
-//  play sound -----------------
-function playSound(sound) {
-    const audio = document.querySelector(`audio[data-key='${sound}']`);
+//  play sound_name -----------------
+function playSound(sound_name) {
+    const audio = document.querySelector(`audio[data-key='${sound_name}']`);
     if(!audio) return; //stop if no audio definition
     audio.volume = 0.25;
     audio.currentTime = 0; //rewind to start
@@ -76,10 +82,10 @@ function playSound(sound) {
 
 // ------------------ Cards initial layout -----------------------
 
-function createCards() {
+function createCards(cardDef) {
     const deck_content = document.createDocumentFragment();
     // duplicates symbols to match cards numer and shuffles them
-    let symbols = shuffle([...symbols_def, ...symbols_def]);
+    let symbols = shuffle([...cardDef.symbols_def, ...cardDef.symbols_def]);
     let i = 1;
     for (let symbol of symbols) {
         let card_list = document.createElement('div');
@@ -106,21 +112,21 @@ function startCards() {
 
 function checkMatch(cur_card) {
     // check if some card is already selected or if there is no more than 2 cards to match
-    if ((open_card_list.length <= 1) || (open_card_list.length > 2))  { return; };
+    if ((scoresDef.open_card_list.length <= 1) || (scoresDef.open_card_list.length > 2))  { return; };
     let click_elem = cur_card.querySelector('.fas');
-    let list_elem = open_card_list[0].querySelector('.fas')
+    let list_elem = scoresDef.open_card_list[0].querySelector('.fas')
     //check if cards symbols match
     if (click_elem.classList.value === list_elem.classList.value) {
-        updateMatch(open_card_list);
+        updateMatch(scoresDef.open_card_list);
     } else {
-        updateNoMatch(open_card_list);
+        updateNoMatch(scoresDef.open_card_list);
     }
-    open_card_list = []
+    scoresDef.open_card_list = []
 }
 
 function updateNoMatch(cards) {
-    score_node.classList.toggle('animated');
-    score_node.classList.toggle('shake');
+    scoresDef.score_node.classList.toggle('animated');
+    scoresDef.score_node.classList.toggle('shake');
     for (let card of cards) {
         card.classList.toggle('nomatch');
     }
@@ -134,8 +140,8 @@ function closeCards(cards) {
         card.classList.toggle('nomatch');
         flipCard(card.classList.item(1), 0);
     }
-    score_node.classList.toggle('animated');
-    score_node.classList.toggle('shake');
+    scoresDef.score_node.classList.toggle('animated');
+    scoresDef.score_node.classList.toggle('shake');
 }
 
 function updateMatch(cards) {
@@ -150,26 +156,28 @@ function updateMatch(cards) {
 
 function openCard(cur_card) {
     cur_card.classList.toggle('open');
-    flipCard(cur_card.classList.item(1), 180);
-    open_card_list.push(cur_card);
+    cardDef.rotate_nr = (cur_card.classList.item(1));
+    cardDef.rotate_deg = 180;
+    flipCard(cardDef);
+    scoresDef.open_card_list.push(cur_card);
     playSound('flip');
 }
 
 function clickCard(event) {
-    (time_started) ? "" : startTime();
+    (timerDef.time_started) ? "" : startTime(timerDef);
     let cur_card = event.target;
     // check if the card was clicked & is not yet matched
     // console.log(cur_card.classList.value);
     if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch')) && !(cur_card.classList.contains('match'))) {
         openCard(cur_card);
         checkMatch(cur_card);
-        addMoves();
+        addMoves(scoresDef);
     }
 }
 
 // ----------------- Scores ---------------------
 
-function countMatch() {
+function countMatch(deck) {
     let count = 0;
     deck.childNodes.forEach(function(node) {
         if (node.classList.contains('match')) {
@@ -179,23 +187,24 @@ function countMatch() {
     return count;
 }
 
-function addMoves() {
-    moves_cur += 1;
-    moves_node.textContent = moves_cur;
+function addMoves(scores) {
+    scores.moves_cur += 1;
+    scores.moves_node.textContent = scores.moves_cur;
     updateStars();
 }
 
-function resetMoves() {
-    moves_cur = 0;
-    match_cur = 0;
-    moves_node.textContent = moves_cur;
+function resetMoves(scores) {
+    scores.moves_cur = 0;
+    scores.match_cur = 0;
+    scores.moves_node.textContent = scores.moves_cur;
 }
 
 // show winner moves and stars count
-function showMatchWin() {
-    match_cur = countMatch();
-    matched.textContent = match_cur;
-    if (match_cur === 16) {
+function showMatchWin(scores, deck) {
+    scores.match_cur = countMatch(deck);
+    const matched = document.querySelector('.matched');
+    matched.textContent = scores.match_cur;
+    if (scores.match_cur === 16) {
         console.log('win win');
         setTimeout(() => {
             // removeChilds(deck);
@@ -207,17 +216,17 @@ function showMatchWin() {
 }
 
 function showScores() {
-    // stop timer
-    clearInterval(time_interval);
+    // stop timerDef
+    clearInterval(timerDef.time_interval);
     //hide cards
     startCards();
 
     let sco_content = document.createElement('div');
     sco_content.classList.add('win');
 
-    const sco_moves = moves_node.textContent;
-    const sco_stars = stars_node.innerHTML;
-    const sco_time = time_node.textContent;
+    const sco_moves = scoresDef.moves_node.textContent;
+    const sco_stars = scoresDef.stars_node.innerHTML;
+    const sco_time = scoresDef.timerDef.time_node.textContent;
 
     sco_content.innerHTML = `<span><strong>YOU ARE A WINNNER !!!</strong></span>
                             <div>Your moves: ${sco_moves}</div>
@@ -240,15 +249,15 @@ function showScores() {
 function getStars() {
     let stars_frag = document.createElement('span');
     let stars_html = '';
-    for (let star_level of stars_def) {
-        if (star_level > moves_cur) {
+    for (let star_level of scoresDef.stars_def) {
+        if (star_level > scoresDef.moves_cur) {
             stars_html = stars_html + `<div><i class="fas fa-star"></i></div>`;
         } else {
             stars_html = stars_html + `<div><i class="far fa-star"></i></div>`;
         }
     }
     stars_frag.innerHTML = stars_html;
-    stars_node.appendChild(stars_frag);
+    scoresDef.stars_node.appendChild(stars_frag);
 
 }
 
@@ -256,30 +265,30 @@ function getStars() {
 function updateStars() {
     let new_stars = 0;
 
-    for (let star_level of stars_def) {
-        if (star_level < moves_cur) {
+    for (let star_level of scoresDef.stars_def) {
+        if (star_level < scoresDef.moves_cur) {
             new_stars = new_stars + 1;
         }
     }
-    if (stars_cur < new_stars) {
-        stars_cur = new_stars;
-        console.log(stars_cur);
-        removeChilds(stars_node);
+    if (scoresDef.stars_cur < new_stars) {
+        scoresDef.stars_cur = new_stars;
+        console.log(scoresDef.stars_cur);
+        removeChilds(scoresDef.stars_node);
         getStars();
     }
 }
 
 
-// ---------------- timer -----------------
+// ---------------- timerDef -----------------
 
-function startTime(){
+function startTime(timer){
     let time_sec = 0;
     let time_min = 0;
-    time_started = true;
-    time_interval = setInterval(function(){
+    timer.time_started = true;
+    timer.time_interval = setInterval(function(){
         let s_pref = (time_sec < 10) ? "0" : "";
         let m_pref = (time_min < 10) ? "0" : "";
-        time_node.innerHTML = m_pref + time_min + ":" + s_pref + time_sec;
+        timer.time_node.innerHTML = m_pref + time_min + ":" + s_pref + time_sec;
         time_sec++;
         if(time_sec == 60){
             time_min++;
@@ -288,10 +297,10 @@ function startTime(){
     },1000);
 }
 
-function resetTime() {
-    clearInterval(time_interval);
-    time_node.innerHTML = "00:00";
-    time_started = false;
+function resetTime(timer) {
+    clearInterval(timer.time_interval);
+    timer.time_node.innerHTML = "00:00";
+    timer.time_started = false;
 }
 
 
@@ -300,16 +309,16 @@ function resetTime() {
 function restartGame() {
     removeChilds(deck);
 
-    createCards();
+    createCards(cardDef);
     setTimeout(startCards, 0);
 
-    resetMoves();
-    showMatchWin();
+    resetMoves(scoresDef);
+    showMatchWin(scoresDef, deck);
 
-    removeChilds(stars_node);
+    removeChilds(scoresDef.stars_node);
     getStars();
 
-    resetTime();
+    resetTime(timerDef);
 }
 
 restartGame();
