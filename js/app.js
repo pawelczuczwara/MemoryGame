@@ -4,7 +4,7 @@
 const deck = document.querySelector('.deck');
 const restart = document.querySelector('.restart');
 
-//  cards symbols and variables
+//  object cards symbols, properties and methods
 const cardDef = {
     cards: document.querySelectorAll('.card'),
     symbols_def: [
@@ -23,13 +23,13 @@ const cardDef = {
         root.style.setProperty("--" + card_nr, rotate_deg + "deg");
     },
 
-    openCard: function openCard(cur_card) {
-        cur_card.classList.toggle('open');
-        this.flipCard(cur_card.classList.item(1), 180);
+    openCard: function openCard(current_card) {
+        current_card.classList.toggle('open');
+        this.flipCard(current_card.classList.item(1), 180);
     },
 
-    closeCards: function closeCards(cards) {
-        for (let card of cards) {
+    closeCards: function closeCards(open_cards) {
+        for (let card of open_cards) {
             card.classList.toggle('open');
             card.classList.toggle('nomatch');
             this.flipCard(card.classList.item(1), 0);
@@ -37,15 +37,12 @@ const cardDef = {
     }
 };
 
-//game scores variables
+// object scores panel properties and methods
 const scoresDef = {
     score_node: document.querySelector('.score-panel'),
-    moves_node: document.querySelector('.moves'),
     stars_node: document.querySelector('.stars'),
     stars_def: [30,40,50,60,70], //tresholds to subsract stars
     stars_cur: 0, //lost points - stars count
-    moves_cur: 0, //moves count
-    match_cur: 0, //matched cards
     open_card_list: [], //list of open cards to match - max 2
 
     shakePanel: function () {
@@ -54,12 +51,72 @@ const scoresDef = {
     }
 }
 
-// timerDef variables and node
+// object timerDef variables and node
 const timerDef = {
     time_node: document.querySelector(".time"),
     time_interval: '',
     time_started: false
 }
+
+// ------------------------ constructor function ------------------
+//
+function Counter (node, step) {
+    this.node = node;
+    this.step = step;
+    this.moves_cur = 0;
+    this.get = function() {
+        return this.moves_cur;
+    };
+    this.add =  function() {
+        this.moves_cur += this.step;
+        this.set();
+        return this.moves_cur;
+    };
+    this.reset = function() {
+        this.moves_cur = 0;
+        this.set();
+        return this.moves_cur;
+    };
+    this.set = function() {
+        this.node.textContent = this.moves_cur;
+    };
+};
+const moves = new Counter(document.querySelector('.moves'), 1);
+
+//  commented to show module design pattern below
+//  using that same properties and methods
+// const scores = new Counter(document.querySelector('.matched'), 2);
+
+
+// ------------------------ Module design pattern ------------------
+//
+//   with private variables, objects return and IIFE
+//
+
+const scores = (function() {
+    const node = document.querySelector('.matched');
+    let counter = 0;
+    let step = 2;
+    return {
+        get: function() {
+            return counter;
+        },
+        add: function() {
+            counter += step;
+            this.set();
+            return counter;
+        },
+        reset: function() {
+            counter = 0;
+            this.set();
+            return counter;
+        },
+        set: function() {
+            node.textContent = counter;
+        }
+    }
+})();
+
 
 // ------------------ Utilities -----------------------
 
@@ -92,7 +149,6 @@ function playSound(sound_name) {
     audio.currentTime = 0; //rewind to start
     audio.play();
 }
-
 
 // ------------------ Cards initial layout -----------------------
 
@@ -127,24 +183,29 @@ function startCards() {
 function checkMatch(cur_card) {
     // check if some card is already selected or if there is no more than 2 cards to match
     if ((scoresDef.open_card_list.length <= 1) || (scoresDef.open_card_list.length > 2))  { return; };
+
     let click_elem = cur_card.querySelector('.fas');
     let list_elem = scoresDef.open_card_list[0].querySelector('.fas')
+
     //check if cards symbols match
     if (click_elem.classList.value === list_elem.classList.value) {
         updateMatch(scoresDef.open_card_list);
     } else {
         updateNoMatch(scoresDef.open_card_list);
     }
+
     scoresDef.open_card_list = []
 }
 
 function updateNoMatch(cards) {
-    scoresDef.score_node.classList.toggle('animated');
-    scoresDef.score_node.classList.toggle('shake');
+    scoresDef.shakePanel();
+
     for (let card of cards) {
         card.classList.toggle('nomatch');
     }
+
     playSound('bad');
+
     setTimeout(() => {
         cardDef.closeCards(cards);
         playSound('flip');
@@ -152,9 +213,11 @@ function updateNoMatch(cards) {
     }, 1000);
 }
 
-
 function updateMatch(cards) {
+
+    scores.add();
     playSound('ok');
+
     setTimeout(() => {
         for (let card of cards) {
             card.classList.toggle('match');
@@ -163,51 +226,29 @@ function updateMatch(cards) {
     }, 1000);
 }
 
-
 function clickCard(event) {
-    (timerDef.time_started) ? "" : startTime(timerDef);
     let cur_card = event.target;
+
+    (timerDef.time_started) ? "" : startTime(timerDef);
     // check if the card was clicked & is not yet matched
     // console.log(cur_card.classList.value);
+
     if ((cur_card.classList.contains('card')) && !(cur_card.classList.contains('nomatch')) && !(cur_card.classList.contains('match'))) {
         cardDef.openCard(cur_card);
         playSound('flip');
         scoresDef.open_card_list.push(cur_card);
         checkMatch(cur_card);
-        addMoves(scoresDef);
+        // addMoves(scoresDef);
+        moves.add();
+        updateStars();
     }
 }
 
 // ----------------- Scores ---------------------
 
-function countMatch() {
-    let count = 0;
-    deck.childNodes.forEach(function(node) {
-        if (node.classList.contains('match')) {
-            count += 1;
-        }
-    });
-    return count;
-}
-
-function addMoves(scores) {
-    scores.moves_cur += 1;
-    scores.moves_node.textContent = scores.moves_cur;
-    updateStars();
-}
-
-function resetMoves(scores) {
-    scores.moves_cur = 0;
-    scores.match_cur = 0;
-    scores.moves_node.textContent = scores.moves_cur;
-}
-
 // show winner moves and stars count
-function showMatchWin(scores) {
-    scoresDef.match_cur = countMatch();
-    const matched = document.querySelector('.matched');
-    matched.textContent = scoresDef.match_cur;
-    if (scoresDef.match_cur === 16) {
+function showMatchWin() {
+    if (scores.get() === 16) {
         console.log('win win');
         setTimeout(() => {
             showScores();
@@ -225,7 +266,7 @@ function showScores() {
     let sco_content = document.createElement('div');
     sco_content.classList.add('win');
 
-    const sco_moves = scoresDef.moves_node.textContent;
+    const sco_moves = moves.get();
     const sco_stars = scoresDef.stars_node.innerHTML;
     const sco_time = timerDef.time_node.textContent;
 
@@ -247,11 +288,12 @@ function showScores() {
 // ---------------- Stars -----------------
 
 // generate stars
-function getStars() {
+function setStars() {
+    removeChilds(scoresDef.stars_node);
     let stars_frag = document.createElement('span');
     let stars_html = '';
     for (let star_level of scoresDef.stars_def) {
-        if (star_level > scoresDef.moves_cur) {
+        if (star_level > moves.get()) {
             stars_html = stars_html + `<div><i class="fas fa-star"></i></div>`;
         } else {
             stars_html = stars_html + `<div><i class="far fa-star"></i></div>`;
@@ -267,15 +309,14 @@ function updateStars() {
     let new_stars = 0;
 
     for (let star_level of scoresDef.stars_def) {
-        if (star_level < scoresDef.moves_cur) {
+        if (star_level < moves.get()) {
             new_stars = new_stars + 1;
         }
     }
     if (scoresDef.stars_cur < new_stars) {
         scoresDef.stars_cur = new_stars;
         console.log(scoresDef.stars_cur);
-        removeChilds(scoresDef.stars_node);
-        getStars();
+        setStars();
     }
 }
 
@@ -308,16 +349,20 @@ function resetTime(timer) {
 // ---------------- Game init / restart -----------------
 
 function restartGame() {
+    //clean deck
     removeChilds(deck);
 
+    //pepare cards
     createCards(cardDef);
+    //animate cards
     setTimeout(startCards, 0);
 
-    resetMoves(scoresDef);
-    showMatchWin(scoresDef, deck);
+    //reset moves conuter, private variable
+    moves.reset();
+    scores.reset();
 
-    removeChilds(scoresDef.stars_node);
-    getStars();
+    //reset stars
+    setStars();
 
     resetTime(timerDef);
 }
