@@ -6,7 +6,7 @@ const restart = document.querySelector('.restart');
 
 //  object cards symbols, properties and methods
 const cardDef = {
-    cards: document.querySelectorAll('.card'),
+    nr: 1,
     symbols_def: [
         'chevron-circle-left',
         'clock',
@@ -18,9 +18,39 @@ const cardDef = {
         'cloud-sun'
     ],
 
-    flipCard: function flipCard(card_nr, rotate_deg) {
-        let root = document.documentElement;
-        root.style.setProperty("--" + card_nr, rotate_deg + "deg");
+    // Cards initial layout
+    createCards: function createCards() {
+        const deck_content = document.createDocumentFragment();
+        // duplicates symbols to match cards numer and shuffles them
+        let symbols = shuffle([...this.symbols_def, ...this.symbols_def]);
+
+        for (let symbol of symbols) {
+            deck_content.appendChild(this.createCard(symbol));
+        }
+        //reset cards nr for next game
+        this.nr = 1;
+
+        deck.appendChild(deck_content);
+        //animate cards
+        setTimeout(this.startCards, 0);
+    },
+
+    createCard: function createCard(symbol) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.classList.add('n' + this.nr);
+        // creates element with font awesome defined in CSS
+        card.innerHTML = `<div class="fas fa-${symbol}"></div>`;
+        this.nr++
+        return card;
+    },
+
+    // positon cards around circle CSS
+    startCards: function startCards() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(function (card) {
+            card.classList.toggle('start');
+        });
     },
 
     openCard: function openCard(current_card) {
@@ -34,14 +64,20 @@ const cardDef = {
             card.classList.toggle('nomatch');
             this.flipCard(card.classList.item(1), 0);
         }
-    }
+    },
+
+    flipCard: function flipCard(card_nr, rotate_deg) {
+        const root = document.documentElement;
+        root.style.setProperty("--" + card_nr, rotate_deg + "deg");
+    },
+
 };
 
 // object scores panel properties and methods
 const scoresDef = {
     score_node: document.querySelector('.score-panel'),
     stars_node: document.querySelector('.stars'),
-    stars_def: [30,40,50,60,70], //tresholds to subsract stars
+    stars_def: [30, 40, 50, 60, 70], //tresholds to subsract stars
     stars_cur: 0, //lost points - stars count
     open_card_list: [], //list of open cards to match - max 2
 
@@ -51,41 +87,36 @@ const scoresDef = {
     }
 }
 
-// object timerDef variables and node
-const timerDef = {
-    time_node: document.querySelector(".time"),
-    time_interval: '',
-    time_started: false
-}
-
-// ------------------------ constructor function ------------------
-//
-function Counter (node, step) {
-    this.node = node;
-    this.step = step;
-    this.moves_cur = 0;
-    this.get = function() {
+// ------------------------ ES6 class ------------------
+// object passed as atribute for constructor
+class Counter{
+    constructor({node, step = 1}) {
+        this.step = step;
+        this.node = node;
+        this.moves_cur = 0;
+    }
+    get() {
         return this.moves_cur;
-    };
-    this.add =  function() {
+    }
+    add() {
         this.moves_cur += this.step;
         this.set();
         return this.moves_cur;
     };
-    this.reset = function() {
+    reset() {
         this.moves_cur = 0;
         this.set();
         return this.moves_cur;
     };
-    this.set = function() {
+    set() {
         this.node.textContent = this.moves_cur;
     };
 };
-const moves = new Counter(document.querySelector('.moves'), 1);
+const moves = new Counter({node: document.querySelector('.moves')});
 
 //  commented to show module design pattern below
 //  using that same properties and methods
-// const scores = new Counter(document.querySelector('.matched'), 2);
+// const scores = new Counter({ node: document.querySelector('.matched'), step: 2});
 
 
 // ------------------------ Module design pattern ------------------
@@ -93,25 +124,25 @@ const moves = new Counter(document.querySelector('.moves'), 1);
 //   with private variables, objects return and IIFE
 //
 
-const scores = (function() {
+const scores = (function () {
     const node = document.querySelector('.matched');
     let counter = 0;
     let step = 2;
     return {
-        get: function() {
+        get: function () {
             return counter;
         },
-        add: function() {
+        add: function () {
             counter += step;
             this.set();
             return counter;
         },
-        reset: function() {
+        reset: function () {
             counter = 0;
             this.set();
             return counter;
         },
-        set: function() {
+        set: function () {
             node.textContent = counter;
         }
     }
@@ -119,6 +150,51 @@ const scores = (function() {
 
 
 // ------------------ Utilities -----------------------
+
+// timer
+const timeDef = {
+    time_node: document.querySelector(".time"),
+    time_sec: 0,
+    time_min: 0,
+    time_started: false,
+    time_interval: '',
+
+    s_pref: function() {
+        return (this.time_sec < 10) ? "0" : "";
+    },
+
+    m_pref: function() {
+        return (this.time_min < 10) ? "0" : "";
+    },
+
+    start: function timeStart() {
+        this.time_started = true;
+        this.time_interval = setInterval(() => {
+            this.HTML();
+            this.tick();
+        }, 1000);
+    },
+
+    reset: function timeReset() {
+        clearInterval(this.time_interval);
+        this.time_started = false;
+        this.time_min = 0;
+        this.time_sec = 0;
+        this.HTML();
+    },
+
+    HTML: function timeHTML() {
+        this.time_node.innerHTML = this.m_pref() + this.time_min + ":" + this.s_pref() + this.time_sec;
+    },
+
+    tick: function timeTick() {
+        this.time_sec++;
+        if (this.time_sec == 60) {
+            this.time_min++;
+            this.time_sec = 0;
+        }
+    },
+}
 
 function removeChilds(node) {
     while (node.firstChild) {
@@ -128,7 +204,8 @@ function removeChilds(node) {
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var currentIndex = array.length,
+        temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -144,45 +221,20 @@ function shuffle(array) {
 //  play sound_name -----------------
 function playSound(sound_name) {
     const audio = document.querySelector(`audio[data-key='${sound_name}']`);
-    if(!audio) return; //stop if no audio definition
+    if (!audio) return; //stop if no audio definition
     audio.volume = 0.25;
     audio.currentTime = 0; //rewind to start
     audio.play();
 }
 
-// ------------------ Cards initial layout -----------------------
-
-function createCards(cardDef) {
-    const deck_content = document.createDocumentFragment();
-    // duplicates symbols to match cards numer and shuffles them
-    let symbols = shuffle([...cardDef.symbols_def, ...cardDef.symbols_def]);
-    let i = 1;
-    for (let symbol of symbols) {
-        let card_list = document.createElement('div');
-        card_list.classList.add('card');
-        card_list.classList.add('n' + i);
-        // creates element with font awesome defined in CSS
-        card_list.innerHTML = `<div class="fas fa-${symbol}"></div>`;
-        deck_content.appendChild(card_list);
-        i++
-    }
-
-    deck.appendChild(deck_content);
-}
-
-// positon cards around circle
-function startCards() {
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(function(card) {
-        card.classList.toggle('start');
-    });
-}
 
 // ------------------------ Card Matching ---------------------------
 
 function checkMatch(cur_card) {
     // check if some card is already selected or if there is no more than 2 cards to match
-    if ((scoresDef.open_card_list.length <= 1) || (scoresDef.open_card_list.length > 2))  { return; };
+    if ((scoresDef.open_card_list.length <= 1) || (scoresDef.open_card_list.length > 2)) {
+        return;
+    };
 
     let click_elem = cur_card.querySelector('.fas');
     let list_elem = scoresDef.open_card_list[0].querySelector('.fas')
@@ -199,12 +251,11 @@ function checkMatch(cur_card) {
 
 function updateNoMatch(cards) {
     scoresDef.shakePanel();
+    playSound('bad');
 
     for (let card of cards) {
         card.classList.toggle('nomatch');
     }
-
-    playSound('bad');
 
     setTimeout(() => {
         cardDef.closeCards(cards);
@@ -229,7 +280,7 @@ function updateMatch(cards) {
 function clickCard(event) {
     let cur_card = event.target;
 
-    (timerDef.time_started) ? "" : startTime(timerDef);
+    (timeDef.time_started) ? '' : timeDef.start();
     // check if the card was clicked & is not yet matched
     // console.log(cur_card.classList.value);
 
@@ -238,7 +289,6 @@ function clickCard(event) {
         playSound('flip');
         scoresDef.open_card_list.push(cur_card);
         checkMatch(cur_card);
-        // addMoves(scoresDef);
         moves.add();
         updateStars();
     }
@@ -251,9 +301,9 @@ function showMatchWin() {
     if (scores.get() === 16) {
         console.log('win win');
         setTimeout(() => {
-            showScores();
-        },
-        1000);
+                showScores();
+            },
+            1000);
     }
 }
 
@@ -321,29 +371,6 @@ function updateStars() {
 }
 
 
-// ---------------- timerDef -----------------
-
-function startTime(timer){
-    let time_sec = 0;
-    let time_min = 0;
-    timer.time_started = true;
-    timer.time_interval = setInterval(function(){
-        let s_pref = (time_sec < 10) ? "0" : "";
-        let m_pref = (time_min < 10) ? "0" : "";
-        timer.time_node.innerHTML = m_pref + time_min + ":" + s_pref + time_sec;
-        time_sec++;
-        if(time_sec == 60){
-            time_min++;
-            time_sec = 0;
-        }
-    },1000);
-}
-
-function resetTime(timer) {
-    clearInterval(timer.time_interval);
-    timer.time_node.innerHTML = "00:00";
-    timer.time_started = false;
-}
 
 
 // ---------------- Game init / restart -----------------
@@ -353,18 +380,17 @@ function restartGame() {
     removeChilds(deck);
 
     //pepare cards
-    createCards(cardDef);
-    //animate cards
-    setTimeout(startCards, 0);
+    cardDef.createCards();
 
-    //reset moves conuter, private variable
+    //reset moves & scores
     moves.reset();
     scores.reset();
 
     //reset stars
     setStars();
 
-    resetTime(timerDef);
+    //resetTime(timerDef);
+    timeDef.reset();
 }
 
 restartGame();
@@ -372,4 +398,3 @@ restartGame();
 
 restart.addEventListener('click', restartGame);
 deck.addEventListener('click', clickCard);
-
