@@ -102,16 +102,16 @@ class Counter{
         this.moves_cur += this.step;
         this.set();
         return this.moves_cur;
-    };
+    }
     reset() {
         this.moves_cur = 0;
         this.set();
         return this.moves_cur;
-    };
+    }
     set() {
         this.node.textContent = this.moves_cur;
-    };
-};
+    }
+}
 const moves = new Counter({node: document.querySelector('.moves')});
 
 //  commented to show module design pattern below
@@ -220,13 +220,14 @@ function shuffle(array) {
 
 //  play sound_name -----------------
 function playSound(sound_name) {
-    const audio = document.querySelector(`audio[data-key='${sound_name}']`);
-    if (!audio) return; //stop if no audio definition
-    audio.volume = 0.25;
-    audio.currentTime = 0; //rewind to start
-    audio.play();
+    if (document.readyState == 'complete') {
+        const audio = document.querySelector(`audio[data-key='${sound_name}']`);
+        if (!audio) return; //stop if no audio definition
+        audio.volume = 0.25;
+        audio.currentTime = 0; //rewind to start
+        audio.play();
+    }
 }
-
 
 // ------------------------ Card Matching ---------------------------
 
@@ -234,7 +235,7 @@ function checkMatch(cur_card) {
     // check if some card is already selected or if there is no more than 2 cards to match
     if ((scoresDef.open_card_list.length <= 1) || (scoresDef.open_card_list.length > 2)) {
         return;
-    };
+    }
 
     let click_elem = cur_card.querySelector('.fas');
     let list_elem = scoresDef.open_card_list[0].querySelector('.fas')
@@ -309,16 +310,16 @@ function showMatchWin() {
 
 function showScores() {
     // stop timerDef
-    clearInterval(timerDef.time_interval);
+    clearInterval(timeDef.time_interval);
     //hide cards
-    startCards();
+    cardDef.startCards();
 
     let sco_content = document.createElement('div');
     sco_content.classList.add('win');
 
     const sco_moves = moves.get();
     const sco_stars = scoresDef.stars_node.innerHTML;
-    const sco_time = timerDef.time_node.textContent;
+    const sco_time = timeDef.time_node.textContent;
 
     sco_content.innerHTML = `<span><strong>YOU ARE A WINNNER !!!</strong></span>
                             <div>Your moves: ${sco_moves}</div>
@@ -365,7 +366,7 @@ function updateStars() {
     }
     if (scoresDef.stars_cur < new_stars) {
         scoresDef.stars_cur = new_stars;
-        console.log(scoresDef.stars_cur);
+        // console.log(scoresDef.stars_cur);
         setStars();
     }
 }

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Matching Game</title>
+    <meta name="description" content="">
+    <link rel="stylesheet prefetch" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Roboto:100">
+
+    <link rel="stylesheet" href="css/app.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css">
+</head>
+
+<body>
+    <header>
+        <h1>memory game</h1>
+    </header>
+        <main>
+            <div class="container">
+                <div class="deck">
+                    <!-- cards generated here -->
+                </div>
+                <div class="score-panel">
+                    <div class="matched">00</div>
+                    <span>matched</span>
+                    <div class="stars"></div>
+                    <hr>
+                    <span>moves</span>
+                    <div class="moves">00</div>
+                    <span class="time">XX:XX</span>
+                    <div class="restart">
+                        <i class="fa fa-redo-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </main>
+    <footer>
+        <div class="win_pop"></div>
+    </footer>
+
+    <audio data-key="flip" rel="prefetch" src="sound/flip.wav"></audio>
+    <audio data-key="bad" rel="prefetch" src="sound/bad.wav"></audio>
+    <audio data-key="ok" rel="prefetch" src="sound/ok.wav"></audio>
+    <audio data-key="win" rel="prefetch" src="sound/win.wav"></audio>
+
+    <script src="js/all.js"></script>
+</body>
+</html>

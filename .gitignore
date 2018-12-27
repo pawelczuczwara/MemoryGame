@@ -4,3 +4,5 @@
 .eslintrc.json
 .vscode
 .git
+node_modules
+node_modules/*

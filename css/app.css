@@ -1,272 +1,319 @@
 :root {
-    /* colors */
-    /* deck background 1 */
-    --black: #0B032D;
-    /* symbols, fonts  */
-    --white: #ffffff;
-    /* cards background, deck border, deck back 2 */
-    --grey: #843b62;
-    /* background for: body, card.match, card:hover, deck border */
-    --blue: #c28ed1;
-    /* card hover */
-    --deep_blue: #916a9c;
-    /* card nomatch */
-    --red: #ff0000;
-
-    /* deck and card sizes */
-    --vw: 100vw;
-    --deck_size: calc(var(--vw) * 0.78);
-    --card_size: calc(var(--vw) * 0.14);
-    --symb_size: calc(var(--vw) * 0.10);
-    --font_size: calc(var(--vw) * 0.04);
-    --card_size-05: calc(var(--vw) * (-0.07));
-    --move_card: calc(var(--vw) * 0.41);
-
-    /* transform variables for rotateY flipping cards */
-    --n1: 0deg; --n2: 0deg; --n3: 0deg; --n4: 0deg; --n5: 0deg; --n6: 0deg; --n7: 0deg; --n8: 0deg;
-    --n9: 0deg; --n10: 0deg; --n11: 0deg; --n12: 0deg; --n13: 0deg; --n14: 0deg; --n15: 0deg; --n16: 0deg;
-}
+  /* colors */
+  /* deck background 1 */
+  --black: #0B032D;
+  /* symbols, fonts  */
+  --white: #ffffff;
+  /* cards background, deck border, deck back 2 */
+  --grey: #843b62;
+  /* background for: body, card.match, card:hover, deck border */
+  --blue: #c28ed1;
+  /* card hover */
+  --deep_blue: #916a9c;
+  /* card nomatch */
+  --red: #ff0000;
+  /* deck and card sizes */
+  --vw: 100vw;
+  --deck_size: calc(var(--vw) * 0.78);
+  --card_size: calc(var(--vw) * 0.14);
+  --symb_size: calc(var(--vw) * 0.10);
+  --font_size: calc(var(--vw) * 0.04);
+  --card_size-05: calc(var(--vw) * (-0.07));
+  --move_card: calc(var(--vw) * 0.41);
+  /* transform variables for rotateY flipping cards */
+  --n1: 0deg;
+  --n2: 0deg;
+  --n3: 0deg;
+  --n4: 0deg;
+  --n5: 0deg;
+  --n6: 0deg;
+  --n7: 0deg;
+  --n8: 0deg;
+  --n9: 0deg;
+  --n10: 0deg;
+  --n11: 0deg;
+  --n12: 0deg;
+  --n13: 0deg;
+  --n14: 0deg;
+  --n15: 0deg;
+  --n16: 0deg; }
 
 html {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; }
 
 *,
 *::before,
 *::after {
-    box-sizing: inherit;
-}
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit; }
 
 html,
 body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    color: var(--blue);
-}
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--blue); }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background: var(--black);
-}
+  font-family: 'Roboto', sans-serif;
+  background: var(--black); }
 
 .container,
 header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column; }
 
 h1 {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 200;
-}
+  font-family: 'Roboto', sans-serif;
+  font-weight: 200; }
 
 /*
  * Styles for the deck of cards
  */
-
 .deck {
-    /* geometry */
-    position: relative;
-    width: var(--deck_size);
-    /* padding-top gives height to the deck */
-    padding-top: var(--deck_size);
-
-    /* styling */
-    /* background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
-    background: url(../img/deck_back.jpg);
-    background-size: var(--deck_size);
-    border: solid 0px var(--grey);
-    border-radius: 50%;
-    margin: calc(var(--card_size) / 2) auto auto auto;
-
-    /* inside elements aligment */
-    display: grid;
-}
+  /* geometry */
+  position: relative;
+  width: var(--deck_size);
+  /* padding-top gives height to the deck */
+  padding-top: var(--deck_size);
+  /* styling */
+  /* background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
+  background: url(../img/deck_back.jpg);
+  background-size: var(--deck_size);
+  border: solid 0px var(--grey);
+  border-radius: 50%;
+  margin: calc(var(--card_size) / 2) auto auto auto;
+  /* inside elements aligment */
+  display: grid; }
 
 .deck .card {
-    /* geometry - to position cards in center of the deck */
-    display: block;
-    overflow: hidden;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    height: var(--card_size);
-    width: var(--card_size);
-    margin: var(--card_size-05);
-
-    /* styling - to style and position interior of the cards */
-    background: var(--black);
-    border: solid 2px var(--blue);
-    font-size: 0em;
-    color: var(--white);
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items:center;
-    /*  transitions */
-    /* transition: background-color 1s ease-out; */
-    transition: ease 1s;
-}
+  /* geometry - to position cards in center of the deck */
+  display: block;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: var(--card_size);
+  width: var(--card_size);
+  margin: var(--card_size-05);
+  /* styling - to style and position interior of the cards */
+  background: var(--black);
+  border: solid 2px var(--blue);
+  font-size: 0em;
+  color: var(--white);
+  border-radius: 50%;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  /*  transitions */
+  /* transition: background-color 1s ease-out; */
+  -webkit-transition: ease 1s;
+  transition: ease 1s; }
 
 /* to "match" rotation of the card */
 .deck .card .fas {
-    transform: rotateY(-180deg);
-}
+  -webkit-transform: rotateY(-180deg);
+          transform: rotateY(-180deg); }
 
 /* position cards around the on the circle */
-.start.n1 { transform: translate(var(--move_card)) rotateY(var(--n1)); }
-.start.n2 { transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg) rotateY(var(--n2)); }
-.start.n3 { transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg) rotateY(var(--n3)); }
-.start.n4 { transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg) rotateY(var(--n4)); }
-.start.n5 { transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg) rotateY(var(--n5)); }
-.start.n6 { transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg) rotateY(var(--n6)); }
-.start.n7 { transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg) rotateY(var(--n7)); }
-.start.n8 { transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg) rotateY(var(--n8)); }
-.start.n9 { transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg) rotateY(var(--n9)); }
-.start.n10 { transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg) rotateY(var(--n10)); }
-.start.n11 { transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg) rotateY(var(--n11)); }
-.start.n12 { transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg) rotateY(var(--n12)); }
-.start.n13 { transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg) rotateY(var(--n13)); }
-.start.n14 { transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg) rotateY(var(--n14)); }
-.start.n15 { transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg) rotateY(var(--n15)); }
-.start.n16 { transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg) rotateY(var(--n16)); }
+.start.n1 {
+  -webkit-transform: translate(var(--move_card)) rotateY(var(--n1));
+          transform: translate(var(--move_card)) rotateY(var(--n1)); }
 
+.start.n2 {
+  -webkit-transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg) rotateY(var(--n2));
+          transform: rotate(-22.5deg) translate(var(--move_card)) rotate(22.5deg) rotateY(var(--n2)); }
+
+.start.n3 {
+  -webkit-transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg) rotateY(var(--n3));
+          transform: rotate(-45deg) translate(var(--move_card)) rotate(45deg) rotateY(var(--n3)); }
+
+.start.n4 {
+  -webkit-transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg) rotateY(var(--n4));
+          transform: rotate(-67.5deg) translate(var(--move_card)) rotate(67.5deg) rotateY(var(--n4)); }
+
+.start.n5 {
+  -webkit-transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg) rotateY(var(--n5));
+          transform: rotate(-90deg) translate(var(--move_card)) rotate(90deg) rotateY(var(--n5)); }
+
+.start.n6 {
+  -webkit-transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg) rotateY(var(--n6));
+          transform: rotate(-112.5deg) translate(var(--move_card)) rotate(112.5deg) rotateY(var(--n6)); }
+
+.start.n7 {
+  -webkit-transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg) rotateY(var(--n7));
+          transform: rotate(-135deg) translate(var(--move_card)) rotate(135deg) rotateY(var(--n7)); }
+
+.start.n8 {
+  -webkit-transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg) rotateY(var(--n8));
+          transform: rotate(-157.5deg) translate(var(--move_card)) rotate(157.5deg) rotateY(var(--n8)); }
+
+.start.n9 {
+  -webkit-transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg) rotateY(var(--n9));
+          transform: rotate(-180deg) translate(var(--move_card)) rotate(180deg) rotateY(var(--n9)); }
+
+.start.n10 {
+  -webkit-transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg) rotateY(var(--n10));
+          transform: rotate(22.5deg) translate(var(--move_card)) rotate(-22.5deg) rotateY(var(--n10)); }
+
+.start.n11 {
+  -webkit-transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg) rotateY(var(--n11));
+          transform: rotate(45deg) translate(var(--move_card)) rotate(-45deg) rotateY(var(--n11)); }
+
+.start.n12 {
+  -webkit-transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg) rotateY(var(--n12));
+          transform: rotate(67.5deg) translate(var(--move_card)) rotate(-67.5deg) rotateY(var(--n12)); }
+
+.start.n13 {
+  -webkit-transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg) rotateY(var(--n13));
+          transform: rotate(90deg) translate(var(--move_card)) rotate(-90deg) rotateY(var(--n13)); }
+
+.start.n14 {
+  -webkit-transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg) rotateY(var(--n14));
+          transform: rotate(112.5deg) translate(var(--move_card)) rotate(-112.5deg) rotateY(var(--n14)); }
+
+.start.n15 {
+  -webkit-transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg) rotateY(var(--n15));
+          transform: rotate(135deg) translate(var(--move_card)) rotate(-135deg) rotateY(var(--n15)); }
+
+.start.n16 {
+  -webkit-transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg) rotateY(var(--n16));
+          transform: rotate(157.5deg) translate(var(--move_card)) rotate(-157.5deg) rotateY(var(--n16)); }
 
 .deck .card:hover {
-    background: var(--deep_blue);
-}
+  background: var(--deep_blue); }
 
 .deck .card.open {
-
-    background: var(--black);
-    cursor: default;
-    font-size: var(--symb_size);
-}
+  background: var(--black);
+  cursor: default;
+  font-size: var(--symb_size); }
 
 .deck .card.show {
-    font-size: var(--symb_size);
-}
+  font-size: var(--symb_size); }
 
 .deck .card.match {
-    cursor: default;
-    color: var(--white);
-    font-size: 0;
-    border: dashed 2px var(--deep_blue);
-}
+  cursor: default;
+  color: var(--white);
+  font-size: 0;
+  border: dashed 2px var(--deep_blue); }
 
 .deck .card.nomatch {
-    transition: ease 1s;
-    background: var(--red);
-    cursor: default;
-    font-size: var(--symb_size);
-}
+  -webkit-transition: ease 1s;
+  transition: ease 1s;
+  background: var(--red);
+  cursor: default;
+  font-size: var(--symb_size); }
 
 /*
  * Styles for the Score Panel
  */
-
 .score-panel {
-    position: absolute;
-    color: var(--white);
-    font-size: var(--font_size);
-    text-align: center;
-    width: calc(var(--deck_size) / 2);
-    margin: 10px 10px auto auto;
-}
+  position: absolute;
+  color: var(--white);
+  font-size: var(--font_size);
+  text-align: center;
+  width: calc(var(--deck_size) / 2);
+  margin: 10px 10px auto auto; }
 
 .score-panel .stars {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    margin: calc(var(--symb_size) * 0.5) 5px 0 0;
-}
-
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  margin: calc(var(--symb_size) * 0.5) 5px 0 0; }
 
 /* .score-panel */
 .stars div {
-    list-style: none;
-    display: inline-block;
-}
+  list-style: none;
+  display: inline-block; }
 
 .score-panel .moves {
-    margin-bottom: 10px;
-}
+  margin-bottom: 10px; }
 
 .score-panel .restart {
-    cursor: pointer;
-    font-size: calc(var(--symb_size) * 0.8);
-    margin-top: calc(var(--symb_size) * 0.4);
-}
-
+  cursor: pointer;
+  font-size: calc(var(--symb_size) * 0.8);
+  margin-top: calc(var(--symb_size) * 0.4); }
 
 /*
  * Styles for the Win Panel
  */
-
 .win {
-    /* geometry */
-    position: absolute;
-    height: var(--deck_size);
-    width: var(--deck_size);
-    border-radius: 50%;
-    z-index: 10;
-
-    /* styling */
-    /* background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
-    background: url(../img/deck_back.jpg);
-    background-size: var(--deck_size);
-    font-size: var(--font_size);
-    color: var(--white);
-    text-align: center;
-
-    /* position elements inside */
-    display: grid;
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
-    padding: 20%;
-
-    transition: ease 1s;
-}
+  /* geometry */
+  position: absolute;
+  height: var(--deck_size);
+  width: var(--deck_size);
+  border-radius: 50%;
+  z-index: 10;
+  /* styling */
+  /* background: url(../img/deck_back.jpg), radial-gradient(circle at 200px 200px, var(--grey), var(--black)); */
+  background: url(../img/deck_back.jpg);
+  background-size: var(--deck_size);
+  font-size: var(--font_size);
+  color: var(--white);
+  text-align: center;
+  /* position elements inside */
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  justify-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 20%;
+  -webkit-transition: ease 1s;
+  transition: ease 1s; }
 
 .win .stars {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-}
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row; }
 
 .win .sco_restart {
-    cursor: pointer;
-    font-size: calc(var(--symb_size) * 0.8);
-    margin-top: calc(var(--symb_size) * 0.4);
-}
+  cursor: pointer;
+  font-size: calc(var(--symb_size) * 0.8);
+  margin-top: calc(var(--symb_size) * 0.4); }
 
 /* ------------------------ media query ----------------------------- */
-
 /* On screens 0-300px */
 @media screen and (max-width: 300px) {
-    :root {
-        --vw: 300px;
-    }
-}
+  :root {
+    --vw: 300px; } }
 
 /* On screens 300-400px */
 @media screen and (max-width: 400px) {
-    :root {
-        --font_size: calc(var(--vw) * 0.04);
-    }
-}
+  :root {
+    --font_size: calc(var(--vw) * 0.04); } }
 
 /* On screens above 600px */
 @media screen and (min-width: 600px) {
-    :root {
-        --vw: 600px;
-    }
-}
-
+  :root {
+    --vw: 600px; } }
